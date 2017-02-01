@@ -25,9 +25,42 @@
     var myCanvas = document.getElementById('myCanvas'),
             winWidth = document.documentElement.clientWidth,//获取页面宽度
             winHeight = document.documentElement.clientHeight;//获取页面高度
+    var count = 0;
+    var flag = 10;
+    var txt;
+    var stage;
+    var shape;
     myCanvas.width = winWidth;//设置画布宽度
     myCanvas.height = winHeight;//设置画布高度
     function init() {
+        stage = new createjs.Stage(myCanvas);
+        txt = new createjs.Text('text on the canvas... 0!', '36px Arial', '#fff');
+        stage.addChild(txt);
+
+        shape = new createjs.Shape();
+        stage.addChildAt(shape, 0);
+
+        resetRect();
+        stage.update();
+
+        createjs.Ticker.setFPS(60);
+        createjs.Ticker.addEventListener('tick', tick);
+    }
+
+    function resetRect() {
+        shape.graphics.clear().beginFill('#f00').drawRect(-10, -10, txt.getMeasuredWidth() + 20, 36 + 20);
+    }
+
+    function tick(event) {
+        count++;
+        txt.text = 'text on the canvas... ' + count + '!';
+
+        // 只在位数增长的时候才重绘
+        if(count=== flag){
+            resetRect();
+            flag *= 10;
+        }
+        stage.update(event);
     }
     window.addEventListener('load', function () {
         init();
